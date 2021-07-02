@@ -62,7 +62,7 @@ class StructureTestCase(BaseTestCase):
 
         with self.app.test_client() as test_client:
             response = test_client.post('/structure/check/', data=json.dumps({}), headers=Header.json)
-            assert response.status_code == 200
+            assert response.status_code == 400
             assert json.loads(response.data) == StructureResponse.BAD_DATA_TYPE
 
     def test_check_structure_error_link_connection(self):
@@ -70,7 +70,7 @@ class StructureTestCase(BaseTestCase):
         with self.app.test_client() as test_client:
             with raises(ConnectionError):
                 response = test_client.post('/structure/check/', data=json.dumps({"link": "http://asdasdasdasdasdafail.com", "structure": {}}), headers=Header.json)
-                assert response.status_code == 200
+                assert response.status_code == 400
                 assert json.loads(response.data) == StructureResponse.BAD_REQUEST
 
     def test_check_structure_error_link_schema(self):
@@ -78,14 +78,14 @@ class StructureTestCase(BaseTestCase):
         with self.app.test_client() as test_client:
             with raises(MissingSchema):
                 response = test_client.post('/structure/check/', data=json.dumps({"link": "fail", "structure": {}}), headers=Header.json)
-                assert response.status_code == 200
+                assert response.status_code == 400
                 assert json.loads(response.data) == StructureResponse.BAD_REQUEST
 
     def test_check_structure_error_structure(self):
         
         with self.app.test_client() as test_client:
             response = test_client.post('/structure/check/', data=json.dumps({"link": OnlinestringtoolsMock.url, "structure": "fail"}))
-            assert response.status_code == 200
+            assert response.status_code == 400
             assert json.loads(response.data) == StructureResponse.BAD_DATA_TYPE
 
     def test_check_structure_is_correct(self):
@@ -110,7 +110,7 @@ class StructureTestCase(BaseTestCase):
             }), headers=Header.json)
             data = json.loads(response.data)
 
-            assert response.status_code == 200
+            assert response.status_code == 202
             assert 'task_id' in data.keys()
 
             task_result = self.wait_check_structure_result(data.get('task_id'))
@@ -134,7 +134,7 @@ class StructureTestCase(BaseTestCase):
             }), headers=Header.json)
             data = json.loads(response.data)
 
-            assert response.status_code == 200
+            assert response.status_code == 202
             assert 'task_id' in data.keys()
 
             task_result = self.wait_check_structure_result(data.get('task_id'))
@@ -154,7 +154,7 @@ class StructureTestCase(BaseTestCase):
             }), headers=Header.json)
             data = json.loads(response.data)
 
-            assert response.status_code == 200
+            assert response.status_code == 202
             assert 'task_id' in data.keys()
 
             task_result = self.wait_check_structure_result(data.get('task_id'))
@@ -178,7 +178,7 @@ class StructureTestCase(BaseTestCase):
             }), headers=Header.json)
             data = json.loads(response.data)
 
-            assert response.status_code == 200
+            assert response.status_code == 202
             assert 'task_id' in data.keys()
 
             task_result = self.wait_check_structure_result(data.get('task_id'))
@@ -205,7 +205,7 @@ class StructureTestCase(BaseTestCase):
             }), headers=Header.json)
             data = json.loads(response.data)
 
-            assert response.status_code == 200
+            assert response.status_code == 202
             assert 'task_id' in data.keys()
 
             task_result = self.wait_check_structure_result(data.get('task_id'))

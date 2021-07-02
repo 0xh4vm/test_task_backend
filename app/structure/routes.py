@@ -33,10 +33,10 @@ class Structure(FlaskView):
         right_structure = self.get_structure()
 
         if structure == right_structure:
-            return StructureResponse.SUCCESS_CHECK_STRUCTURE
+            return StructureResponse.SUCCESS_CHECK_STRUCTURE, 200
         
         task = get_difference_structure.delay(left_structure=structure, right_structure=right_structure)
-        return {"task_id": task.id, "message": f"Для проверки статуса задачи перейдите /structure/check/{task.id}"}
+        return {"task_id": task.id, "message": f"Для проверки статуса задачи перейдите /structure/check/{task.id}"}, 202
 
     @check_get_request('link', DEFAULT_LINK, StructureResponse.BAD_REQUEST)
     def get(self):
@@ -50,17 +50,18 @@ class Structure(FlaskView):
     def check_structure(self):
         '''POST /structure/check/ with data = {"link": <str:link>, "structure": <dict:structure>}'''
         if not request.is_json:
-            return jsonify(StructureResponse.BAD_DATA_TYPE)
+            return jsonify(StructureResponse.BAD_DATA_TYPE), 400
 
         link = request.json.get("link")
         structure = request.json.get("structure")
 
         if type(link) != str or type(structure) != dict:
-            return jsonify(StructureResponse.BAD_DATA_TYPE)
+            return jsonify(StructureResponse.BAD_DATA_TYPE), 400
 
         self.set_args(link)
         
-        return jsonify(self.check_structure_correct(structure))
+        result, http_code_response = self.check_structure_correct(structure)
+        return jsonify(result), http_code_response
 
     @route('/check/<task_id>/', methods=["GET"])
     def check_task_status(self, task_id):
@@ -68,12 +69,12 @@ class Structure(FlaskView):
         task = get_difference_structure.AsyncResult(str(task_id))
 
         if task.state == 'PENDING': 
-            return jsonify({'state': 'PENDING', 'status': 'Pending...'})
+            return jsonify({'state': 'PENDING', 'status': 'Pending...'}), 200
         
         elif task.state != 'FAILURE':
-            return jsonify({"is_correct": False, 'state': task.state, "difference": task.info})
+            return jsonify({"is_correct": False, 'state': task.state, "difference": task.info}), 200
         
         else:
-            return jsonify({'state': task.state, 'status': 'Fail'})
+            return jsonify({'state': task.state, 'status': 'Fail'}), 200
 
 Structure.register(bp)

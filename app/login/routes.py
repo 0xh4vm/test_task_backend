@@ -55,31 +55,31 @@ class Login(FlaskView):
             phone_number = request.args.get("phone").strip()
 
             if not self.check_phone_number_format(phone_number):
-                return jsonify(AuthResponse.BAD_FORMAT_PHONE_NUMBER)
+                return jsonify(AuthResponse.BAD_FORMAT_PHONE_NUMBER), 400
 
             exist_code = self.check_phone_number_exists(phone_number)
 
             if exist_code is not None:
                 self.set_cache(phone_number=phone_number, code=exist_code)
-                return exist_code
+                return exist_code, 200
 
-            return self.set_new_code(phone_number)
+            return self.set_new_code(phone_number), 201
 
         except:
-            return jsonify(AuthResponse.UNKNOWNK_ERROR)
+            return jsonify(AuthResponse.UNKNOWNK_ERROR), 400
 
     def post(self):
         '''POST /login/ with data = {"phone": <str:phone_number>, "code": <str:code>}'''
         if not request.is_json:
-            return jsonify(AuthResponse.BAD_DATA_TYPE)
+            return jsonify(AuthResponse.BAD_DATA_TYPE), 400
 
         phone_number = request.json.get("phone")
         code = request.json.get("code")
 
         if AuthData.query.with_entities(AuthData.id).filter_by(phone_number=phone_number, code=code).first() is None:
-            return jsonify(AuthResponse.BAD_AUTH_DATA)
+            return jsonify(AuthResponse.BAD_AUTH_DATA), 400
 
-        return jsonify(AuthResponse.SUCCESS_AUTH_DATA)
+        return jsonify(AuthResponse.SUCCESS_AUTH_DATA), 200
 
 Login.register(bp)
 
