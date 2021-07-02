@@ -23,8 +23,8 @@ class Structure(FlaskView):
 
     def get_structure(self):
         '''Получение структуры страницы'''
-        pattern = "<([A-z]+[1-6]?[\s>])" if self.tags is None else f"<({'|'.join(self.tags)}[\s>])"
-        tags = re.findall(pattern, self.source_code, re.DOTALL)
+        pattern = "<([a-z]+[1-6]?)[\s>]" if self.tags is None else f"<({'|'.join(self.tags)})[\s>]"
+        tags = re.findall(pattern, self.source_code, re.DOTALL | re.IGNORECASE)
 
         return {tag: tags.count(tag) for tag in set(tags)}
 
