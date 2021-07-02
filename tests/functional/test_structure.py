@@ -48,6 +48,15 @@ class StructureTestCase(BaseTestCase):
             assert json.loads(response.data) == {
                 "div": 962, 
             }
+    
+    def test_structure_status_code_with_link_and_tags_hacker(self):
+
+        with self.app.test_client() as test_client:
+            response = test_client.get(f'/structure/?link={HackeroneMock.url}&tags=a')
+            assert response.status_code == 200
+            assert json.loads(response.data) == {
+                "a": 107,
+            }
 
     def test_check_structure_error_data_type(self):
 
