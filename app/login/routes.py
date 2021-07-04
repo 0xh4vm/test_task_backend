@@ -1,6 +1,5 @@
 from flask import json, request, jsonify
-from flask_classy import FlaskView, route
-import redis
+from flask_classy import FlaskView
 from app import db, redis_client
 from app.login.utils import randomword
 from app.models import AuthData

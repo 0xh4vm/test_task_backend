@@ -1,5 +1,4 @@
-from flask import request, jsonify, current_app
-from flask.blueprints import DeferredSetupFunction
+from flask import request, jsonify
 from flask_classy import FlaskView, route
 from app.structure import DEFAULT_LINK, bp
 import requests
@@ -7,7 +6,6 @@ import re
 from app.structure.responses import StructureResponse
 from app.decorators import check_get_request
 from app.structure.celery_tasks import get_difference_structure
-from celery.result import AsyncResult
 
 
 class Structure(FlaskView):
