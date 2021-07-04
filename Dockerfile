@@ -9,13 +9,11 @@ COPY app app
 COPY tests tests
 COPY requirements.txt test_task_backend.py celery_worker.py config.py pytest.ini app_start.sh ./
 
-RUN chmod 777 *.sh
+RUN chmod +x *.sh
 
 ENV FLASK_APP test_task_backend.py
 
 RUN pip3 install -r requirements.txt
-
-RUN ./celery_start.sh &
 
 EXPOSE 5000
 ENTRYPOINT [ "./app_start.sh" ]
