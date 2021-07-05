@@ -32,6 +32,9 @@ jobs:
       - name: Docker container run 
         run: docker run -d --name test_task_backend -p 8000:5000 --rm xh4vm/test_task_backend
         
+      - name: Restart redis-server
+        run: docker exec -i test_task_backend bash -c '/etc/init.d/redis-server restart'
+        
       - name: Run Pytest
         run: docker exec -i test_task_backend pytest -vv
         
