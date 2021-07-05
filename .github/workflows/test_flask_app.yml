@@ -31,7 +31,6 @@ jobs:
         flask db migrate
         flask db upgrade
 
-        service redis-server restart 
         celery -A celery_worker.celery worker &
         gunicorn -b :5000 --access-logfile - --error-logfile - test_task_backend:app
 
