@@ -39,5 +39,5 @@ jobs:
         run: docker run -d --name test_task_backend -p 8000:5000 --rm ${{ secrets.DOCKERHUB_USERNAME }}/test_task_backend:latest
         
       - name: Run Pytest
-        run: docker exec -it test_task_backend pytest -vv
+        run: docker exec -i test_task_backend pytest -vv
         
