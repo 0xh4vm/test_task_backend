@@ -25,18 +25,12 @@ jobs:
       - name: Set up Docker Buildx
         id: buildx
         uses: docker/setup-buildx-action@v1
-
-      - name: Build image
-        id: docker_build
-        uses: docker/build-push-action@v2
-        with:
-          context: ./
-          file: ./Dockerfile
-          push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/test_task_backend:latest
+      
+      - name: Build docker image
+        run: docker build -t xh4vm/test_task_backend .
 
       - name: Docker container run 
-        run: docker run -d --name test_task_backend -p 8000:5000 --rm ${{ secrets.DOCKERHUB_USERNAME }}/test_task_backend:latest
+        run: docker run -d --name test_task_backend -p 8000:5000 --rm xh4vm/test_task_backend
         
       - name: Run Pytest
         run: docker exec -i test_task_backend pytest -vv
