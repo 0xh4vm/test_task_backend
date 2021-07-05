@@ -22,10 +22,17 @@ jobs:
         python-version: 3.9
     - name: Install dependencies
       run: |
+        apt-get update && apt-get install -y python-pip python-dev build-essential redis
         python3 -m pip install --upgrade pip
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Test with pytest
       run: |
-        docker build -t xh4vm/test_task_backend .
-        docker run -d --name test_task_backend -p 8000:5000 --rm xh4vm/test_task_backend
+        flask db init
+        flask db migrate
+        flask db upgrade
+
+        /etc/init.d/redis-server restart 
+        celery -A celery_worker.celery worker &
+        gunicorn -b :5000 --access-logfile - --error-logfile - test_task_backend:app
+
         pytest -vv
